@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Service Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .button-group {
+            text-align: center;
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Notification Service Test Page</h1>
+
+        <div class="form-group">
+            <label for="userId">User ID:</label>
+            <input type="text" id="userId">
+        </div>
+
+        <div class="form-group">
+            <label for="categories">Categories (comma separated, use "all" for all categories):</label>
+            <input type="text" id="categories">
+        </div>
+
+        <div class="button-group">
+            <button id="subscribe">Subscribe to Notifications</button>
+            <button id="unsubscribe">Unsubscribe from Notifications</button>
+        </div>
+
+        <div class="form-group">
+            <label for="senderId">Sender ID:</label>
+            <input type="text" id="senderId">
+        </div>
+
+        <div class="form-group">
+            <label for="receiverUserId">Receiver User ID:</label>
+            <input type="text" id="receiverUserId">
+        </div>
+
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <input type="text" id="category">
+        </div>
+
+        <div class="form-group">
+            <label for="message">Message:</label>
+            <input type="text" id="message">
+        </div>
+
+        <div class="button-group">
+            <button id="sendNotification">Send Notification</button>
+        </div>
+
+        <div class="button-group">
+            <button id="getNotifications">Get Notifications</button>
+        </div>
+
+        <div class="form-group">
+            <label for="notificationId">Notification ID:</label>
+            <input type="text" id="notificationId">
+        </div>
+
+        <div class="button-group">
+            <button id="markAsRead">Mark as Read</button>
+        </div>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        const handleResponse = async (response) => {
+            const resultDiv = document.getElementById('result');
+            if (response.ok) {
+                const data = await response.json();
+                resultDiv.textContent = JSON.stringify(data, null, 2);
+            } else {
+                const error = await response.json();
+                resultDiv.textContent = JSON.stringify(error, null, 2);
+            }
+        };
+
+        document.getElementById('subscribe').addEventListener('click', async () => {
+            const userId = document.getElementById('userId').value;
+            const categories = document.getElementById('categories').value.split(',');
+
+            const response = await fetch('http://localhost:8082/notifications/subscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId, categories })
+            });
+
+            await handleResponse(response);
+        });
+
+        document.getElementById('unsubscribe').addEventListener('click', async () => {
+            const userId = document.getElementById('userId').value;
+
+            const response = await fetch('http://localhost:8082/notifications/unsubscribe', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ userId })
+            });
+
+            await handleResponse(response);
+        });
+
+        document.getElementById('sendNotification').addEventListener('click', async () => {
+            const senderId = document.getElementById('senderId').value;
+            const receiverUserId = document.getElementById('receiverUserId').value;
+            const category = document.getElementById('category').value;
+            const message = document.getElementById('message').value;
+
+            const response = await fetch('http://localhost:8082/notifications/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ senderId, receiverUserId, category, message })
+            });
+
+            await handleResponse(response);
+        });
+
+        document.getElementById('getNotifications').addEventListener('click', async () => {
+            const userId = document.getElementById('userId').value;
+
+            const response = await fetch(`http://localhost:8082/notifications/${userId}`, {
+                method: 'GET'
+            });
+
+            await handleResponse(response);
+        });
+
+        document.getElementById('markAsRead').addEventListener('click', async () => {
+            const notificationId = document.getElementById('notificationId').value;
+
+            const response = await fetch(`http://localhost:8082/notifications/read/${notificationId}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            await handleResponse(response);
+        });
+    </script>
+</body>
+</html>
