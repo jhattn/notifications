@@ -54,4 +54,26 @@ export function createNotificationController(server: Server, io: SocketIOServer)
             res.send(500, { error: error.message });
         }
     });
+
+    // Endpoint to mock SQS message
+    server.post('/notifications/mock-sqs', async (req, res) => {
+        const { senderId, receiverUserId, category, message } = req.body;
+        try {
+            await notificationService.handleMockSQSMessage({ senderId, receiverUserId, category, message });
+            res.send(200, { message: 'Mock SQS message processed successfully' });
+        } catch (error: any) {
+            res.send(500, { error: error.message });
+        }
+    });
+
+    // Endpoint to add web push subscription
+    server.post('/notifications/push-subscribe', async (req, res) => {
+        const { userId, subscription } = req.body;
+        try {
+            await notificationService.addPushSubscription(userId, subscription);
+            res.send(200, { message: 'Push subscription added successfully' });
+        } catch (error: any) {
+            res.send(500, { error: error.message });
+        }
+    });
 }

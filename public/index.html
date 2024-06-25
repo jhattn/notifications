@@ -23,6 +23,13 @@
             text-align: center;
             color: #333;
         }
+        .section {
+            margin-bottom: 30px;
+        }
+        .section h2 {
+            margin-bottom: 10px;
+            color: #333;
+        }
         .form-group {
             margin-bottom: 15px;
         }
@@ -64,56 +71,109 @@
     <div class="container">
         <h1>Notification Service Test Page</h1>
 
-        <div class="form-group">
-            <label for="userId">User ID:</label>
-            <input type="text" id="userId">
+        <div class="section">
+            <h2>Subscribe to Notifications</h2>
+            <div class="form-group">
+                <label for="subscribeUserId">User ID:</label>
+                <input type="text" id="subscribeUserId">
+            </div>
+            <div class="form-group">
+                <label for="subscribeCategories">Categories (comma separated, use "all" for all categories):</label>
+                <input type="text" id="subscribeCategories">
+            </div>
+            <div class="button-group">
+                <button id="subscribe">Subscribe to Notifications</button>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="categories">Categories (comma separated, use "all" for all categories):</label>
-            <input type="text" id="categories">
+        <div class="section">
+            <h2>Unsubscribe from Notifications</h2>
+            <div class="form-group">
+                <label for="unsubscribeUserId">User ID:</label>
+                <input type="text" id="unsubscribeUserId">
+            </div>
+            <div class="button-group">
+                <button id="unsubscribe">Unsubscribe from Notifications</button>
+            </div>
         </div>
 
-        <div class="button-group">
-            <button id="subscribe">Subscribe to Notifications</button>
-            <button id="unsubscribe">Unsubscribe from Notifications</button>
+        <div class="section">
+            <h2>Send Notification</h2>
+            <div class="form-group">
+                <label for="sendSenderId">Sender ID:</label>
+                <input type="text" id="sendSenderId">
+            </div>
+            <div class="form-group">
+                <label for="sendReceiverUserId">Receiver User ID:</label>
+                <input type="text" id="sendReceiverUserId">
+            </div>
+            <div class="form-group">
+                <label for="sendCategory">Category:</label>
+                <input type="text" id="sendCategory">
+            </div>
+            <div class="form-group">
+                <label for="sendMessage">Message:</label>
+                <input type="text" id="sendMessage">
+            </div>
+            <div class="button-group">
+                <button id="sendNotification">Send Notification</button>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="senderId">Sender ID:</label>
-            <input type="text" id="senderId">
+        <div class="section">
+            <h2>Get Notifications</h2>
+            <div class="form-group">
+                <label for="getUserId">User ID:</label>
+                <input type="text" id="getUserId">
+            </div>
+            <div class="button-group">
+                <button id="getNotifications">Get Notifications</button>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="receiverUserId">Receiver User ID:</label>
-            <input type="text" id="receiverUserId">
+        <div class="section">
+            <h2>Mark Notification as Read</h2>
+            <div class="form-group">
+                <label for="markNotificationId">Notification ID:</label>
+                <input type="text" id="markNotificationId">
+            </div>
+            <div class="button-group">
+                <button id="markAsRead">Mark as Read</button>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="category">Category:</label>
-            <input type="text" id="category">
+        <div class="section">
+            <h2>Mock SQS Event</h2>
+            <div class="form-group">
+                <label for="mockSenderId">Sender ID:</label>
+                <input type="text" id="mockSenderId">
+            </div>
+            <div class="form-group">
+                <label for="mockReceiverUserId">Receiver User ID:</label>
+                <input type="text" id="mockReceiverUserId">
+            </div>
+            <div class="form-group">
+                <label for="mockCategory">Category:</label>
+                <input type="text" id="mockCategory">
+            </div>
+            <div class="form-group">
+                <label for="mockMessage">Message:</label>
+                <input type="text" id="mockMessage">
+            </div>
+            <div class="button-group">
+                <button id="mockSQS">Mock SQS Event</button>
+            </div>
         </div>
 
-        <div class="form-group">
-            <label for="message">Message:</label>
-            <input type="text" id="message">
-        </div>
-
-        <div class="button-group">
-            <button id="sendNotification">Send Notification</button>
-        </div>
-
-        <div class="button-group">
-            <button id="getNotifications">Get Notifications</button>
-        </div>
-
-        <div class="form-group">
-            <label for="notificationId">Notification ID:</label>
-            <input type="text" id="notificationId">
-        </div>
-
-        <div class="button-group">
-            <button id="markAsRead">Mark as Read</button>
+        <div class="section">
+            <h2>Subscribe to Push Notifications</h2>
+            <div class="form-group">
+                <label for="pushUserId">User ID:</label>
+                <input type="text" id="pushUserId">
+            </div>
+            <div class="button-group">
+                <button id="subscribePush">Subscribe to Push Notifications</button>
+            </div>
         </div>
 
         <div id="result" class="result"></div>
@@ -132,8 +192,8 @@
         };
 
         document.getElementById('subscribe').addEventListener('click', async () => {
-            const userId = document.getElementById('userId').value;
-            const categories = document.getElementById('categories').value.split(',');
+            const userId = document.getElementById('subscribeUserId').value;
+            const categories = document.getElementById('subscribeCategories').value.split(',');
 
             const response = await fetch('http://localhost:8082/notifications/subscribe', {
                 method: 'POST',
@@ -147,7 +207,7 @@
         });
 
         document.getElementById('unsubscribe').addEventListener('click', async () => {
-            const userId = document.getElementById('userId').value;
+            const userId = document.getElementById('unsubscribeUserId').value;
 
             const response = await fetch('http://localhost:8082/notifications/unsubscribe', {
                 method: 'POST',
@@ -161,10 +221,10 @@
         });
 
         document.getElementById('sendNotification').addEventListener('click', async () => {
-            const senderId = document.getElementById('senderId').value;
-            const receiverUserId = document.getElementById('receiverUserId').value;
-            const category = document.getElementById('category').value;
-            const message = document.getElementById('message').value;
+            const senderId = document.getElementById('sendSenderId').value;
+            const receiverUserId = document.getElementById('sendReceiverUserId').value;
+            const category = document.getElementById('sendCategory').value;
+            const message = document.getElementById('sendMessage').value;
 
             const response = await fetch('http://localhost:8082/notifications/send', {
                 method: 'POST',
@@ -178,7 +238,7 @@
         });
 
         document.getElementById('getNotifications').addEventListener('click', async () => {
-            const userId = document.getElementById('userId').value;
+            const userId = document.getElementById('getUserId').value;
 
             const response = await fetch(`http://localhost:8082/notifications/${userId}`, {
                 method: 'GET'
@@ -188,7 +248,7 @@
         });
 
         document.getElementById('markAsRead').addEventListener('click', async () => {
-            const notificationId = document.getElementById('notificationId').value;
+            const notificationId = document.getElementById('markNotificationId').value;
 
             const response = await fetch(`http://localhost:8082/notifications/read/${notificationId}`, {
                 method: 'POST',
@@ -198,6 +258,51 @@
             });
 
             await handleResponse(response);
+        });
+
+        document.getElementById('mockSQS').addEventListener('click', async () => {
+            const senderId = document.getElementById('mockSenderId').value;
+            const receiverUserId = document.getElementById('mockReceiverUserId').value;
+            const category = document.getElementById('mockCategory').value;
+            const message = document.getElementById('mockMessage').value;
+
+            const response = await fetch('http://localhost:8082/notifications/mock-sqs', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ senderId, receiverUserId, category, message })
+            });
+
+            await handleResponse(response);
+        });
+
+        document.getElementById('subscribePush').addEventListener('click', async () => {
+            const userId = document.getElementById('pushUserId').value;
+
+            if ('serviceWorker' in navigator) {
+                try {
+                    const registration = await navigator.serviceWorker.register('/sw.js');
+                    const subscription = await registration.pushManager.subscribe({
+                        userVisibleOnly: true,
+                        applicationServerKey: '<%= publicVapidKey %>' // Injected by the server
+                    });
+
+                    const response = await fetch('http://localhost:8082/notifications/push-subscribe', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ userId, subscription })
+                    });
+
+                    await handleResponse(response);
+                } catch (error) {
+                    console.error('Error subscribing to push notifications:', error);
+                }
+            } else {
+                console.error('Service workers are not supported in this browser');
+            }
         });
     </script>
 </body>
