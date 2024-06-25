@@ -70,7 +70,7 @@
 <body>
     <div class="container">
         <h1>Notification Service Test Page</h1>
-
+        <div id="result" class="result"></div>
         <div class="section">
             <h2>Subscribe to Notifications</h2>
             <div class="form-group">
@@ -175,8 +175,21 @@
                 <button id="subscribePush">Subscribe to Push Notifications</button>
             </div>
         </div>
+        <div class="section">
+            <h2>Send Push Message Test</h2>
+            <div class="form-group">
+                <label for="testPushUserId">User ID:</label>
+                <input type="text" id="testPushUserId">
+            </div>
+            <div class="form-group">
+                <label for="testPushMessage">Message:</label>
+                <input type="text" id="testPushMessage">
+            </div>
+            <div class="button-group">
+                <button id="sendTestPushMessageBtn">Send Test Push Message</button>
+            </div>
+        </div>
 
-        <div id="result" class="result"></div>
     </div>
 
     <script>
@@ -304,6 +317,21 @@
                 console.error('Service workers are not supported in this browser');
             }
         });
+
+        document.getElementById('sendTestPushMessageBtn').addEventListener('click', async () => {
+        const userId = document.getElementById('testPushUserId').value;
+        const message = document.getElementById('testPushMessage').value;
+
+        const response = await fetch('http://localhost:8082/notifications/push-send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ userId, message })
+        });
+
+        await handleResponse(response);
+    });
     </script>
 </body>
 </html>

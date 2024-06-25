@@ -44,11 +44,14 @@ export class NotificationService {
         await db.query(query, [userId, subscription]);
     }
 
-    async sendPushNotification(userId: string, message: Message) {
+    async sendPushNotification(userId: string, message: any) {
         const query = 'SELECT subscription FROM push_subscriptions WHERE user_id = $1';
         const result = await db.query(query, [userId]);
+        console.log("result",result.rows);
         if (result.rows.length > 0) {
             const subscription: PushSubscription = result.rows[0].subscription;
+            console.log({subscription, message});
+
             await webpush.sendNotification(subscription, JSON.stringify(message));
         }
     }
@@ -110,4 +113,5 @@ export class NotificationService {
             await this.sendPushNotification(receiverUserId!, { senderId, receiverUserId, message: msg, category });
         }
     }
+  
 }

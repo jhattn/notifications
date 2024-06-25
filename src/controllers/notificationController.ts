@@ -76,4 +76,15 @@ export function createNotificationController(server: Server, io: SocketIOServer)
             res.send(500, { error: error.message });
         }
     });
+
+    // Endpoint to send a test push notification
+    server.post('/notifications/push-send', async (req, res) => {
+        const { userId, message } = req.body;
+        try {
+            await notificationService.sendPushNotification(userId, { title: 'Test Push Notification', message: message });
+            res.send(200, { message: 'Test push notification sent successfully' });
+        } catch (error: any) {
+            res.send(500, { error: error.message });
+        }
+    });
 }
